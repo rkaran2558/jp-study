@@ -1,61 +1,164 @@
 import { supabase } from '@/lib/supabase'
-import JobCard from '@/components/JobCard'
-import ResultCard from '@/components/ResultCard'
+import UpdatesTicker from '@/components/UpdatesTicker'
 import Link from 'next/link'
 
+export const revalidate = 0 // Opt out of static caching
+
 export default async function Home() {
-  const [{ data: jobs }, { data: results }] = await Promise.all([
-    supabase.from('jobs').select('*').order('created_at', { ascending: false }).limit(6),
-    supabase.from('results').select('*').order('date', { ascending: false }).limit(6)
+  const [{ data: jobs }, { data: results }, { data: admitCards }, { data: syllabi }, { data: answerKeys }, { data: blogs }] = await Promise.all([
+    supabase.from('jobs').select('id, title, slug, last_date').order('created_at', { ascending: false }).limit(15),
+    supabase.from('results').select('id, title, pdf_link').order('date', { ascending: false }).limit(15),
+    supabase.from('jobs').select('id, title, slug, admit_card_link').not('admit_card_link', 'is', null).order('created_at', { ascending: false }).limit(15),
+    supabase.from('syllabus').select('id, title, file_link').order('created_at', { ascending: false }).limit(10),
+    supabase.from('schemes').select('id, title, slug').order('created_at', { ascending: false }).limit(10),
+    supabase.from('blogs').select('id, title, slug, category').eq('published', true).order('created_at', { ascending: false }).limit(10)
   ])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
+    <div>
+      <div className="max-w-6xl mx-auto px-2 sm:px-4 py-6">
 
-      {/* Hero Banner */}
-      <div className="bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-xl p-8 mb-12 text-center shadow-lg">
-        <h1 className="text-4xl md:text-5xl font-bold mb-3">JP GK Study</h1>
-        <p className="text-lg text-blue-100">Latest Government Jobs, Exam Results & Admit Cards — Updated Daily</p>
-        <div className="flex justify-center gap-4 mt-6 flex-wrap">
-          <Link href="/jobs" className="bg-white text-blue-700 font-semibold px-6 py-2 rounded-full hover:bg-blue-50 transition text-sm">
-            💼 Browse Jobs
-          </Link>
-          <Link href="/results" className="bg-blue-600 border border-white text-white font-semibold px-6 py-2 rounded-full hover:bg-blue-800 transition text-sm">
-            📊 View Results
-          </Link>
+        {/* Sarkari Result Signature 3-Column Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+
+          {/* Column 1: Latest Jobs */}
+
+          <div className="border border-blue-800 rounded-sm bg-white shadow-sm flex flex-col h-full">
+            <div className="bg-blue-700 text-white font-bold p-2 text-center text-xl tracking-wide shrink-0">
+              Latest Jobs
+            </div>
+            <ul className="divide-y divide-gray-200 flex-1">
+              {jobs?.length === 0 && <li className="p-4 text-center text-gray-400 text-sm">No new jobs</li>}
+              {jobs?.map((j: any) => {
+                const isNew = new Date(j.last_date) > new Date();
+                return (
+                  <li key={`job-${j.id}`} className="hover:bg-gray-50">
+                    <Link href={`/jobs/${j.slug || j.id}`} className="block p-2 text-center text-blue-800 hover:text-red-700 font-medium text-[15px] leading-tight transition-colors">
+                      {j.title} {isNew && <span className="text-red-500 text-xs ml-1 font-bold animate-pulse">New</span>}
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+            <div className="p-2 bg-gray-100 text-center border-t border-gray-300 shrink-0 mt-auto">
+              <Link href="/jobs" className="text-red-700 hover:underline text-sm font-bold">View More</Link>
+            </div>
+          </div>
+
+
+          {/* Column 2: Admit Card (Green Header) */}
+          <div className="border border-green-800 rounded-sm bg-white shadow-sm flex flex-col h-full">
+            <div className="bg-green-700 text-white font-bold p-2 text-center text-xl tracking-wide shrink-0">
+              Admit Card
+            </div>
+            <ul className="divide-y divide-gray-200 flex-1">
+              {admitCards?.length === 0 && <li className="p-4 text-center text-gray-400 text-sm">No new admit cards</li>}
+              {admitCards?.map((a: any) => (
+                <li key={`admit-${a.id}`} className="hover:bg-gray-50">
+                  <Link href={a.admit_card_link || `/jobs/${a.slug || a.id}`} className="block p-2 text-center text-blue-800 hover:text-red-700 font-medium text-[15px] leading-tight transition-colors">
+                    {a.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="p-2 bg-gray-100 text-center border-t border-gray-300 shrink-0 mt-auto">
+              <Link href="/admit-cards" className="text-red-700 hover:underline text-sm font-bold">View More</Link>
+            </div>
+          </div>
+
+          {/* Column 3: Result */}
+          <div className="border border-red-800 rounded-sm bg-white shadow-sm flex flex-col h-full">
+            <div className="bg-red-700 text-white font-bold p-2 text-center text-xl tracking-wide shrink-0">
+              Result
+            </div>
+            <ul className="divide-y divide-gray-200 flex-1">
+              {results?.length === 0 && <li className="p-4 text-center text-gray-400 text-sm">No new results</li>}
+              {results?.map((r: any) => (
+                <li key={r.id} className="hover:bg-gray-50">
+                  <Link href={r.pdf_link || '#'} className="block p-2 text-center text-blue-800 hover:text-red-700 font-medium text-[15px] leading-tight transition-colors">
+                    {r.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="p-2 bg-gray-100 text-center border-t border-gray-300 shrink-0 mt-auto">
+              <Link href="/results" className="text-red-700 hover:underline text-sm font-bold">View More</Link>
+            </div>
+          </div>
+
+
+
         </div>
+
+        {/* Lower 2-Column Section: Syllabus & Answer Key/Schemes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+
+          {/* Syllabus (Gray Header) */}
+          <div className="border border-slate-700 rounded-sm bg-white shadow-sm flex flex-col h-full">
+            <div className="bg-slate-700 text-white font-bold p-2 text-center text-xl tracking-wide shrink-0">
+              Syllabus
+            </div>
+            <ul className="divide-y divide-gray-200 flex-1">
+              {syllabi?.length === 0 && <li className="p-4 text-center text-gray-400 text-sm">No new syllabus</li>}
+              {syllabi?.map((s: any) => (
+                <li key={`syl-${s.id}`} className="hover:bg-gray-50">
+                  <Link href={s.file_link || '#'} className="block p-2 text-center text-blue-800 hover:text-red-700 font-medium text-[15px] leading-tight transition-colors">
+                    {s.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="p-2 bg-gray-100 text-center border-t border-gray-300 shrink-0 mt-auto">
+              <Link href="/syllabus" className="text-red-700 hover:underline text-sm font-bold">View More</Link>
+            </div>
+          </div>
+
+          {/* Schemes (Orange Header) */}
+          <div className="border border-orange-700 rounded-sm bg-white shadow-sm flex flex-col h-full">
+            <div className="bg-orange-600 text-white font-bold p-2 text-center text-xl tracking-wide shrink-0">
+              Government Schemes
+            </div>
+            <ul className="divide-y divide-gray-200 flex-1">
+              {answerKeys?.length === 0 && <li className="p-4 text-center text-gray-400 text-sm">No new schemes</li>}
+              {answerKeys?.map((k: any) => (
+                <li key={`scm-${k.id}`} className="hover:bg-gray-50">
+                  <Link href={`/schemes/${k.slug || k.id}`} className="block p-2 text-center text-blue-800 hover:text-red-700 font-medium text-[15px] leading-tight transition-colors">
+                    {k.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="p-2 bg-gray-100 text-center border-t border-gray-300 shrink-0 mt-auto">
+              <Link href="/schemes" className="text-red-700 hover:underline text-sm font-bold">View More</Link>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Blog / Study Material Section */}
+        <div className="border border-purple-800 rounded-sm bg-white shadow-sm flex flex-col h-full mt-2">
+          <div className="bg-purple-700 text-white font-bold p-2 text-center text-xl tracking-wide shrink-0">
+            Latest Articles & Study Material
+          </div>
+          <ul className="divide-y divide-gray-200">
+            {blogs?.length === 0 && <li className="p-4 text-center text-gray-400 text-sm">No new articles</li>}
+            {blogs?.map((b: any) => (
+              <li key={`blog-${b.id}`} className="hover:bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between p-2.5 gap-2">
+                <Link href={`/blog/${b.slug || b.id}`} className="text-blue-800 hover:text-red-700 font-medium text-[15px] leading-tight transition-colors">
+                  {b.title}
+                </Link>
+                <span className="text-[10px] text-purple-700 bg-purple-100 font-bold uppercase tracking-widest px-2 py-0.5 rounded whitespace-nowrap">
+                  {b.category || 'Article'}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <div className="p-2 bg-gray-100 text-center border-t border-gray-300 shrink-0 mt-auto">
+            <Link href="/blog" className="text-red-700 hover:underline text-sm font-bold">View All Articles</Link>
+          </div>
+        </div>
+
       </div>
-
-      {/* Latest Jobs */}
-      <section className="mb-16">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 border-l-4 border-blue-600 pl-3">
-            💼 Latest Jobs
-          </h2>
-          <Link href="/jobs" className="text-blue-600 hover:underline text-sm font-medium">
-            View All Jobs →
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {jobs?.map((job: any) => <JobCard key={job.id} job={job} />)}
-        </div>
-      </section>
-
-      {/* Latest Results */}
-      <section className="mb-16">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 border-l-4 border-green-500 pl-3">
-            📊 Latest Results
-          </h2>
-          <Link href="/results" className="text-blue-600 hover:underline text-sm font-medium">
-            View All Results →
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results?.map((result: any) => <ResultCard key={result.id} result={result} />)}
-        </div>
-      </section>
-
     </div>
   )
 }

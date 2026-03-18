@@ -1,59 +1,64 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 
 export default function Navbar() {
-  return (
-    <nav className="bg-blue-700 text-white shadow-lg">
-      {/* Top bar */}
-      <div className="bg-blue-900 text-center py-1 text-sm">
-        🔔 Latest Govt Jobs, Results & Admit Cards — Updated Daily
-      </div>
+    const pathname = usePathname();
 
-      {/* Main nav */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
-        
-        {/* Logo + Name */}
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/logo.png"
-            alt="JP GK Study Logo"
-            width={60}
-            height={60}
-            className="rounded-full object-cover border-2 border-white"
-          />
-          <span className="text-2xl font-bold tracking-wide">JP GK Study</span>
-        </Link>
+    const links = [
+        { path: '/', label: 'Home' },
+        { path: '/jobs', label: 'Jobs' },
+        { path: '/results', label: 'Results' },
+        { path: '/admit-cards', label: 'Admit Cards' },
+        { path: '/syllabus', label: 'Syllabus' },
+        { path: '/schemes', label: 'Schemes' },
+        { path: '/blog', label: 'Blog' },
+    ];
 
-        {/* Nav links */}
-        <div className="flex flex-wrap justify-center gap-1">
-          <Link href="/" className="px-3 py-1.5 rounded hover:bg-blue-600 font-medium text-sm transition">
-            🏠 Home
-          </Link>
-          <Link href="/jobs" className="px-3 py-1.5 rounded hover:bg-blue-600 font-medium text-sm transition">
-            💼 Latest Jobs
-          </Link>
-          <Link href="/results" className="px-3 py-1.5 rounded hover:bg-blue-600 font-medium text-sm transition">
-            📊 Results
-          </Link>
-          <Link href="/admit-cards" className="px-3 py-1.5 rounded hover:bg-blue-600 font-medium text-sm transition">
-            🪪 Admit Cards
-          </Link>
-          <Link href="/syllabus" className="px-3 py-1.5 rounded hover:bg-blue-600 font-medium text-sm transition">
-            📚 Syllabus
-          </Link>
-        </div>
-      </div>
+    return (
+        <nav className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
 
-      {/* Category quick links */}
-      <div className="bg-blue-800 py-1.5">
-        <div className="max-w-7xl mx-auto px-4 flex flex-wrap gap-3 text-xs font-medium justify-center">
-          {['SSC', 'UPSC', 'Railway', 'Bank', 'State PSC', 'Defence', 'Teaching'].map((cat) => (
-            <Link key={cat} href={`/jobs?category=${cat}`} className="hover:text-yellow-300 transition">
-              {cat}
-            </Link>
-          ))}
-        </div>
-      </div>
-    </nav>
-  )
+            {/* Main nav */}
+            <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+
+                {/* Logo + Name */}
+                <Link href="/" className="flex items-center gap-3 shrink-0">
+                    <Image
+                        src="/logo.png"
+                        alt="Logomark"
+                        width={56}
+                        height={56}
+                        className="rounded object-cover"
+                    />
+                    <span className="text-2xl font-bold text-gray-800 tracking-tight">JP GK Study</span>
+                </Link>
+
+                {/* Nav links (Right Aligned) */}
+                <div className="flex flex-wrap justify-center md:justify-end gap-5 flex-1 w-full text-sm font-medium text-gray-600">
+                    {links.map(link => {
+                        const isActive = pathname === link.path || (link.path !== '/' && pathname.startsWith(link.path));
+                        return (
+                            <Link key={link.path} href={link.path}
+                                className={`transition-colors py-1 ${isActive ? 'text-blue-700 font-bold border-b-2 border-blue-600' : 'hover:text-blue-600'}`}>
+                                {link.label}
+                            </Link>
+                        )
+                    })}
+                </div>
+            </div>
+
+            {/* Category quick links */}
+            <div className="bg-blue-50 border-t border-blue-100 py-2">
+                <div className="max-w-7xl mx-auto px-4 flex flex-wrap gap-5 text-[13px] font-semibold text-blue-800 justify-center">
+                    {['SSC', 'UPSC', 'Railway', 'Bank', 'State PSC', 'Defence', 'Teaching'].map((cat) => (
+                        <Link key={cat} href={`/jobs?category=${cat}`} className="hover:text-blue-600 hover:underline transition-colors tracking-wide">
+                            {cat}
+                        </Link>
+                    ))}
+                </div>
+            </div>
+        </nav>
+    )
 }
