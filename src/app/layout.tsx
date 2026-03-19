@@ -20,15 +20,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
+      <body className={`${inter.className} bg-slate-50 text-slate-900 min-h-screen flex flex-col selection:bg-blue-100 selection:text-blue-900`}>
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2200445871437905"
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
-      </head>
-      <body className={`${inter.className} bg-slate-50 text-slate-900 min-h-screen flex flex-col selection:bg-blue-100 selection:text-blue-900`}>
         <GlobalTicker />
         <Navbar />
         <main className="flex-1 w-full relative">
