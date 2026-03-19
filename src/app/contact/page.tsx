@@ -25,7 +25,7 @@ export default function ContactPage() {
         <div className="mt-12 pt-8 border-t border-gray-100">
           <h2 className="text-xl font-bold text-slate-800 mb-4">Connect With Us</h2>
           <div className="flex justify-center gap-6 mb-6">
-            <a href="https://www.youtube.com/@JPGKStudy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-red-600 font-bold hover:underline">
+            <a href="https://youtube.com/@jpgkstudyy?si=Lv3s3bvy0GISIYog" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-red-600 font-bold hover:underline">
               <span className="text-2xl">▶</span> YouTube Channel
             </a>
           </div>

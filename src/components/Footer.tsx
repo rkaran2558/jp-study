@@ -41,7 +41,7 @@ export default function Footer() {
               <li><Link href="/about" className="hover:underline hover:text-red-700">About Us</Link></li>
               <li><Link href="/contact" className="hover:underline hover:text-red-700">Contact Us</Link></li>
               <li><Link href="/privacy" className="hover:underline hover:text-red-700">Privacy Policy</Link></li>
-              <li><a href="https://www.youtube.com/@JPGKStudy" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-red-700 text-red-600 font-bold">YouTube</a></li>
+              <li><a href="https://youtube.com/@jpgkstudyy?si=Lv3s3bvy0GISIYog" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-red-700 text-red-600 font-bold">YouTube</a></li>
             </ul>
           </div>
 
