@@ -55,7 +55,8 @@ export default function AdminBlogPage() {
 
     let result;
     if (editItem?.id) {
-      result = await supabase.from('blogs').update(payload).eq('id', editItem.id)
+      const { id, ...updateData } = payload
+      result = await supabase.from('blogs').update(updateData).eq('id', editItem.id)
     } else {
       result = await supabase.from('blogs').insert(payload)
     }

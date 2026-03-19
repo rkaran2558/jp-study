@@ -2,6 +2,7 @@ import { createSupabaseServer } from '@/lib/supabase-server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { isValidUrl } from '@/lib/utils'
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
@@ -32,7 +33,7 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
         <span className="text-gray-600">{post.title}</span>
       </div>
 
-      {post.thumbnail_url && (
+      {isValidUrl(post.thumbnail_url) && (
         <div className="relative h-64 w-full rounded-xl overflow-hidden mb-6 bg-gray-100">
           <Image src={post.thumbnail_url} alt={post.title} fill className="object-cover" />
         </div>

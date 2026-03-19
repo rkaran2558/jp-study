@@ -55,7 +55,8 @@ export default function AdminSchemesPage() {
 
     let result;
     if (editItem?.id) {
-      result = await supabase.from('schemes').update(payload).eq('id', editItem.id)
+      const { id, ...updateData } = payload
+      result = await supabase.from('schemes').update(updateData).eq('id', editItem.id)
     } else {
       result = await supabase.from('schemes').insert(payload)
     }

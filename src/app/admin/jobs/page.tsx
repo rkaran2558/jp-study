@@ -71,7 +71,8 @@ export default function AdminJobsPage() {
 
     let result;
     if (editJob?.id) {
-      result = await supabase.from('jobs').update(payload).eq('id', editJob.id)
+      const { id, ...updateData } = payload
+      result = await supabase.from('jobs').update(updateData).eq('id', editJob.id)
     } else {
       result = await supabase.from('jobs').insert(payload)
     }

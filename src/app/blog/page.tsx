@@ -1,6 +1,7 @@
 import { createSupabaseServer } from '@/lib/supabase-server'
 import Link from 'next/link'
 import Image from 'next/image'
+import { isValidUrl } from '@/lib/utils'
 
 export default async function BlogPage({ searchParams }: { searchParams: Promise<{ q?: string; page?: string }> }) {
   const supabase = await createSupabaseServer()
@@ -43,7 +44,7 @@ export default async function BlogPage({ searchParams }: { searchParams: Promise
           {posts.map(post => (
             <Link key={post.id} href={`/blog/${post.slug || post.id}`}
               className="bg-white rounded-sm border border-gray-200 shadow-sm hover:border-blue-500 transition-all overflow-hidden flex flex-col group">
-              {post.thumbnail_url && (
+              {isValidUrl(post.thumbnail_url) && (
                 <div className="relative h-44 w-full bg-slate-100 border-b border-gray-100 overflow-hidden">
                   <Image src={post.thumbnail_url} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
