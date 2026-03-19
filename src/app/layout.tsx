@@ -11,6 +11,9 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'JP GK Study | Govt Jobs, Results & Admit Cards',
   description: 'Your definitive portal for the latest Government Jobs, Exam Results, and Admit Cards, updated daily.',
+  other: {
+    'google-adsense-account': 'ca-pub-2200445871437905',
+  },
 }
 
 export default function RootLayout({
